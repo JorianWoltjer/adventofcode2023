@@ -10,6 +10,6 @@ mod tests {
     fn example() {
         let input = "";
 
-        assert_eq!(unimplemented!(input), unimplemented!())
+        assert_eq!(unimplemented!(), unimplemented!())
     }
 }
