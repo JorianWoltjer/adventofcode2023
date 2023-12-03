@@ -6,6 +6,7 @@ fn main() {
     let answer = minimum_playable(input).unwrap();
 
     println!("{answer}");
+    assert_eq!(answer, 69629);
 }
 
 #[cfg(test)]

@@ -1,5 +1,12 @@
+use dayN::part1_function;
+
 fn main() {
-    unimplemented!("dayNa");
+    let input = include_str!("../../input.txt");
+
+    let answer = part1_function(input).unwrap();
+
+    println!("{answer}");
+    assert_eq!(answer, 11);
 }
 
 #[cfg(test)]
@@ -10,6 +17,6 @@ mod tests {
     fn example() {
         let input = "";
 
-        assert_eq!(unimplemented!(), unimplemented!())
+        assert_eq!(part1_function(input), 1)
     }
 }

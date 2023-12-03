@@ -67,7 +67,7 @@ impl Game {
     }
 }
 
-pub fn count_valid(s: &str, max_red: u32, max_green: u32, max_blue: u32) -> Result<usize, Err> {
+pub fn count_valid(s: &str) -> Result<usize, Err> {
     let games: Vec<Game> = s
         .split('\n')
         .map(|line| line.parse())
@@ -77,7 +77,7 @@ pub fn count_valid(s: &str, max_red: u32, max_green: u32, max_blue: u32) -> Resu
         .iter()
         .enumerate()
         .map(|(i, game)| {
-            if game.is_valid(max_red, max_green, max_blue) {
+            if game.is_valid(12, 13, 14) {
                 i + 1 // IDs start counting at 1
             } else {
                 0
