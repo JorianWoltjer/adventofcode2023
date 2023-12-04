@@ -1,10 +1,10 @@
-use std::{collections::HashSet, error, str::FromStr};
+use std::{error, str::FromStr};
 
 type Err = Box<dyn error::Error>;
 
 struct Card {
     numbers: Vec<u8>,
-    winning_numbers: HashSet<u8>,
+    winning_numbers: Vec<u8>,
 }
 impl FromStr for Card {
     type Err = Err;
