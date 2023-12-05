@@ -15,6 +15,10 @@ impl Offsetter {
     pub fn convert(&self, n: u64) -> u64 {
         (self.offset + n as i64) as u64
     }
+
+    pub fn convert_range(&self, range: Range<u64>) -> Range<u64> {
+        self.convert(range.start)..self.convert(range.end)
+    }
 }
 
 #[derive(Debug)]
@@ -59,45 +63,40 @@ impl Map {
     pub fn convert_ranges(&self, ranges: Vec<Range<u64>>) -> Vec<Range<u64>> {
         let mut result = vec![];
 
+        // Queue is needed because one range can have multiple offsetters inside
+        // The idea is to split a range when an offsetter overlaps
         let mut queue = VecDeque::from(ranges);
         while let Some(range) = queue.pop_front() {
-            // println!("Queue {queue:?}");
-            // println!("-> {result:?}");
-
             let mut done = false;
 
             for offset in &self.offsetters {
-                // println!("Input: {range:?} in {offset:?}");
-                // TODO: use min()/max() math to do the same easier?
-                // TODO: at least make a range convert function
                 if offset.src.start <= range.start {
                     if offset.src.end <= range.start {
                         continue;
                     } else if offset.src.end < range.end {
-                        // println!("End is inside range, start is converted");
-                        result.push(offset.convert(range.start)..offset.convert(offset.src.end));
+                        // End is inside range, start is converted
+                        result.push(offset.convert_range(range.start..offset.src.end));
                         queue.push_back(offset.src.end..range.end);
                         done = true;
                         break;
                     } else {
-                        // println!("End is after range, everything is converted");
-                        result.push(offset.convert(range.start)..offset.convert(range.end));
+                        // End is after range, everything is converted
+                        result.push(offset.convert_range(range.start..range.end));
                         done = true;
                         break;
                     }
                 } else if offset.src.start < range.end {
                     if offset.src.end < range.end {
-                        // println!("Start and end are inside, so split twice");
+                        // Start and end are inside, so split twice
                         queue.push_back(range.start..offset.src.start);
-                        result
-                            .push(offset.convert(offset.src.start)..offset.convert(offset.src.end));
+                        result.push(offset.convert_range(offset.src.start..offset.src.end));
                         queue.push_back(offset.src.end..range.end);
                         done = true;
                         break;
                     } else {
-                        // println!("Start is inside, and end is outside, so end is converted");
+                        // Start is inside, and end is outside, so end is converted
                         queue.push_back(range.start..offset.src.start);
-                        result.push(offset.convert(offset.src.start)..offset.convert(range.end));
+                        result.push(offset.convert_range(offset.src.start..range.end));
                         done = true;
                         break;
                     }
@@ -110,7 +109,6 @@ impl Map {
             }
         }
 
-        // println!("FINAL: {result:?}");
         result
     }
 }
@@ -170,23 +168,6 @@ pub fn minimum_converted_location(s: &str) -> Result<u64, Err> {
 }
 
 // PART 2
-
-enum SplitRange<T> {
-    Single(Range<T>),
-    Double((Range<T>, Range<T>)),
-}
-trait RangeSplitExt<T: PartialOrd> {
-    fn split(self, n: T) -> SplitRange<T>;
-}
-impl<T: PartialOrd + Copy> RangeSplitExt<T> for Range<T> {
-    fn split(self, n: T) -> SplitRange<T> {
-        if self.contains(&n) {
-            SplitRange::Double((self.start..n, n..self.end))
-        } else {
-            SplitRange::Single(self)
-        }
-    }
-}
 
 pub fn minimum_location_range(s: &str) -> Result<u64, Err> {
     let chunks = s
