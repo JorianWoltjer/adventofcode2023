@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, error};
+use std::error;
 
 type Err = Box<dyn error::Error>;
 
@@ -96,10 +96,10 @@ impl HandKind {
     }
 }
 
-#[derive(Debug)]
+#[derive(PartialOrd, Ord, PartialEq, Eq, Debug)]
 struct Hand {
-    cards: [Card; 5],
     kind: HandKind,
+    cards: [Card; 5],
     bid: u32,
 }
 impl Hand {
@@ -121,25 +121,6 @@ impl Hand {
         Ok(Self { cards, kind, bid })
     }
 }
-impl Ord for Hand {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.kind.cmp(&other.kind) {
-            Ordering::Equal => self.cards.cmp(&other.cards),
-            other => other,
-        }
-    }
-}
-impl PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-impl PartialEq for Hand {
-    fn eq(&self, other: &Self) -> bool {
-        self.cards == other.cards
-    }
-}
-impl Eq for Hand {}
 
 pub fn order_hands(s: &str) -> Result<u32, Err> {
     let mut hands: Vec<Hand> = s
