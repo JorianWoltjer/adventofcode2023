@@ -57,25 +57,17 @@ enum HandKind {
     FiveOfAKind,
 }
 impl HandKind {
-    fn from_cards(cards: &[Card; 5]) -> HandKind {
+    fn get_counts(cards: &[Card; 5]) -> [usize; 14] {
         let mut counts = [0; 14];
         for card in cards {
             counts[*card as usize] += 1;
         }
         counts.sort();
         counts.reverse();
-        match counts.as_slice() {
-            [5, ..] => HandKind::FiveOfAKind,
-            [4, 1, ..] => HandKind::FourOfAKind,
-            [3, 2, ..] => HandKind::FullHouse,
-            [3, ..] => HandKind::ThreeOfAKind,
-            [2, 2, ..] => HandKind::TwoPair,
-            [2, ..] => HandKind::OnePair,
-            _ => HandKind::HighCard,
-        }
+        counts
     }
 
-    fn from_cards_joker(cards: &[Card; 5]) -> HandKind {
+    fn get_counts_joker(cards: &[Card; 5]) -> [usize; 14] {
         let mut counts = [0; 14];
         let mut jokers = 0;
         for card in cards {
@@ -88,14 +80,17 @@ impl HandKind {
         counts.sort();
         counts.reverse();
         counts[0] += jokers; // It is always best to add jokers to the highest count
-        match counts.as_slice() {
+        counts
+    }
+
+    fn from_counts(counts: [usize; 14]) -> HandKind {
+        match counts {
             [5, ..] => HandKind::FiveOfAKind,
             [4, 1, ..] => HandKind::FourOfAKind,
             [3, 2, ..] => HandKind::FullHouse,
             [3, ..] => HandKind::ThreeOfAKind,
             [2, 2, ..] => HandKind::TwoPair,
             [2, ..] => HandKind::OnePair,
-            [1, ..] => HandKind::HighCard,
             _ => HandKind::HighCard,
         }
     }
@@ -116,11 +111,11 @@ impl Hand {
             .collect::<Result<Vec<_>, _>>()?;
 
         let cards = cards.try_into().map_err(|_| "Invalid number of cards")?;
-        let kind = if joker {
-            HandKind::from_cards_joker(&cards)
+        let kind = HandKind::from_counts(if joker {
+            HandKind::get_counts_joker(&cards)
         } else {
-            HandKind::from_cards(&cards)
-        };
+            HandKind::get_counts(&cards)
+        });
         let bid = bid.parse()?;
 
         Ok(Self { cards, kind, bid })
