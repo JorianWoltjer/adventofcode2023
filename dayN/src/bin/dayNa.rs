@@ -14,9 +14,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn example() {
+    fn example_a() {
         let input = "";
 
-        assert_eq!(part1_function(input), 1)
+        assert_eq!(part1_function(input).unwrap(), 1)
     }
 }
