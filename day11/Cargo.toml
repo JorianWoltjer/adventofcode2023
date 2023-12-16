@@ -1,0 +1,21 @@
+[package]
+name = "day11"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+criterion = "0.5.1"
+grid = "0.12.0"
+itertools = "0.12.0"
+
+[[bin]]
+name = "day11a"
+
+[[bin]]
+name = "day11b"
+
+[[bench]]
+name = "bench"
+harness = false
