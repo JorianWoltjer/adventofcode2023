@@ -1,0 +1,20 @@
+[package]
+name = "day15"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+criterion = "0.5.1"
+linked-hash-map = "0.5.6"
+
+[[bin]]
+name = "day15a"
+
+[[bin]]
+name = "day15b"
+
+[[bench]]
+name = "bench"
+harness = false
